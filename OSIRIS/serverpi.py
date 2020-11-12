@@ -19,7 +19,7 @@ class read(unittest.TestCase):
         
         self.assertTrue(temperature < 50, msg="There is a possibility of a fire")
         self.assertTrue(humidity < 5, msg="The air is dry, with a possibility of a fire")
-        self.assertTrue(pressure < 10, msg="The pressure is high")
+        self.assertTrue(pressure < 101, msg="The pressure is high")
     
         
         
