@@ -31,9 +31,14 @@ def auth():
 
 
 def drive(drive):
-    file1 = drive.CreateFile({'title': 'Hello.txt'})
+    file1 = drive.CreateFile({'title': 'OSIRIS.jpg'})
     file1.SetContentFile('t.jpg')
+
     file1.Upload()
+    permission = file1.InsertPermission({
+        'type': 'anyone',
+        'value': 'anyone',
+        'role': 'reader'})
     thingspeak_post(file1['id'])
     # download(file1['id'])
     # file = drive.CreateFile({'id': file1['id']})
