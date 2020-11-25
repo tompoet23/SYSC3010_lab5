@@ -1,3 +1,15 @@
+# SYSC 3010 PROJECT - OSIRIS SECURITY SYSTEM
+#
+# AUTHOR: Timothy Knowles
+#
+# VERSION: November 24th, 2020
+# 
+# SENSORY DATA FROM RASPBERRY PI PUSH TO THINGSPEAK SERVER 
+#
+# CONFIGURATION FROM : "project_cfg.py"
+# TEST SUITE FROM : "sensor_pi_pytest.py"
+
+
 #for unit test framework
 import pytest
 
