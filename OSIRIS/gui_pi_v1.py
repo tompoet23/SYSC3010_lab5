@@ -10,8 +10,11 @@ from googleapiclient.http import MediaIoBaseDownload
 from pydrive.auth import GoogleAuth
 from pydrive.drive import GoogleDrive
 
+from google_drive_downloader import GoogleDriveDownloader
+
+
 # ..\ORISIS\src\assets\pictures / t2.jpeg
-IMAGEPATH = r'C:\Users\plipm\WebstormProjects\ORISIS\src\assets\pictures\t.jpeg'
+IMAGEPATH = r'C:\Users\plipm\WebstormProjects\ORISIS\src\assets\pictures\osiris.jpg'
 
 
 def getPicture(id):
@@ -50,14 +53,17 @@ def read():
             toDatabase(field[0])
         elif 'null' not in field[0]["field2"]:
             print('pic')
+            print(field[0]["field2"])
             try:
-                download_file_from_google_drive(field[0]["field2"])
-            except:
+                # download_file_from_google_drive(field[0]["field2"])
+                GoogleDriveDownloader.download_file_from_google_drive(file_id=field[0]["field2"], dest_path=IMAGEPATH)
+            except SyntaxError:
                 print('error: failed to download')
+                print(SyntaxError)
             try:
                 im = Image.open(IMAGEPATH)
                 print(im.format)
-                if im.format is 'JPEG':
+                if im.format is 'JPG':
                     im.close()
                     raise
                 im.close()
@@ -132,12 +138,18 @@ def get_confirm_token(response):
 
 
 def save_response_content(response):
-    CHUNK_SIZE = 32768
-
-    with open(IMAGEPATH, "wb") as f:
-        for chunk in response.iter_content(CHUNK_SIZE):
-            if chunk:  # filter out keep-alive new chunks
+    # CHUNK_SIZE = 32768
+    # with open(IMAGEPATH, "wb") as f:
+    # response.read
+    print(response.status_code)
+    if response.status_code == 200:
+        with open(IMAGEPATH, 'wb') as f:
+            for chunk in response.iter_content(1024):
                 f.write(chunk)
+    # with open(IMAGEPATH, "wb") as f:
+    #     for chunk in response.iter_content(CHUNK_SIZE):
+    #         if chunk:  # filter out keep-alive new chunks
+    #             f.write(chunk)
 
 
 if __name__ == "__main__":

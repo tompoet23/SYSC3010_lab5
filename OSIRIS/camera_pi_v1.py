@@ -6,6 +6,8 @@ from time import sleep
 from pydrive.auth import GoogleAuth
 from pydrive.drive import GoogleDrive
 
+from PIL import Image
+
 THINGSPEAK_WRITEKEY = 'JXB39Y73FYFB1Y4K'
 
 
@@ -36,7 +38,12 @@ def auth():
 def drive(drive):
     try:
         file1 = drive.CreateFile({'title': 'OSIRIS.jpg'})
-        file1.SetContentFile('image.jpg')
+        img = Image.open('image.jpg')
+        # 2. Compressing the image
+        img.save("compressed_image.jpg",
+                 optimize=True,
+                 quality=30)
+        file1.SetContentFile("compressed_image.jpg")
 
         file1.Upload()
         permission = file1.InsertPermission({
