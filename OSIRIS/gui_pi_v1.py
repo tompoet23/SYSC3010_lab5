@@ -1,3 +1,4 @@
+import csv
 import io
 import sqlite3
 from time import sleep
@@ -14,8 +15,9 @@ from google_drive_downloader import GoogleDriveDownloader
 
 
 # ..\ORISIS\src\assets\pictures / t2.jpeg
-IMAGEPATH = r'C:\Users\plipm\WebstormProjects\ORISIS\src\assets\pictures\osiris.jpg'
 
+IMAGEPATH = r'OSIRIS/WebOSIRIS/src/assets/assets/pictures/osiris.jpg'
+CSVPATH = 'WebOSIRIS/src/assets/assets/output.csv'
 
 def getPicture(id):
     # print(id)
@@ -99,6 +101,13 @@ def toDatabase(entry):
     # for row in cursor:
     #     print(row['date'], row['alertedSensor'], row['sound'], row['humidity'], row['pressure'], row['temperature'], row['picture'])
     dbconnect.commit()
+    query = "SELECT * FROM sensorTable"
+    cursor.execute(query)
+    with open(CSVPATH, "w") as outfile:
+        writer = csv.writer(outfile, quoting=csv.QUOTE_NONNUMERIC)
+        writer.writerow(col[0] for col in cursor.description)
+        for row in cursor:
+            writer.writerow(row)
 
     dbconnect.close()
 

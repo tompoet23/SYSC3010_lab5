@@ -1,0 +1,40 @@
+<table mat-table [dataSource]="dataSource"
+       matSort matSortActive="created_at" matSortDisableClear matSortDirection="desc"
+>
+  <!--- Note that these columns can be defined in any order.
+        The actual rendered columns are set as a property on the row definition" -->
+
+  <ng-container matColumnDef="created_at">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear> created_at </th>
+    <td mat-cell *matCellDef="let element"> {{element.created_at}} </td>
+  </ng-container>
+  <ng-container matColumnDef="humid">
+    <th mat-header-cell *matHeaderCellDef> humid </th>
+    <td mat-cell *matCellDef="let element"> {{element.humid}} </td>
+  </ng-container>
+  <ng-container matColumnDef="press">
+    <th mat-header-cell *matHeaderCellDef> press </th>
+    <td mat-cell *matCellDef="let element"> {{element.press}} </td>
+  </ng-container>
+  <ng-container matColumnDef="temp">
+    <th mat-header-cell *matHeaderCellDef> temp </th>
+    <td mat-cell *matCellDef="let element"> {{element.temp}} </td>
+  </ng-container>
+  <ng-container matColumnDef="pitch">
+    <th mat-header-cell *matHeaderCellDef> pitch </th>
+    <td mat-cell *matCellDef="let element"> {{element.pitch}} </td>
+  </ng-container>
+  <ng-container matColumnDef="yaw">
+    <th mat-header-cell *matHeaderCellDef> yaw </th>
+    <td mat-cell *matCellDef="let element"> {{element.yaw}} </td>
+  </ng-container>
+  <ng-container matColumnDef="roll">
+    <th mat-header-cell *matHeaderCellDef> roll </th>
+    <td mat-cell *matCellDef="let element"> {{element.roll}} </td>
+  </ng-container>
+
+  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+  <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+</table>
+<mat-paginator [length]="length" [pageSize]="15"></mat-paginator>
+

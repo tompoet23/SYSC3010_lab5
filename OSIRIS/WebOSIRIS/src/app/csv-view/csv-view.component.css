@@ -1,0 +1,10 @@
+.mat-column-number,
+.mat-column-state {
+  min-width: 200px;
+}
+table {
+  min-width: 800px;
+  width: 100%;
+  height: 80%;
+}
+
