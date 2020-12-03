@@ -72,5 +72,5 @@ if __name__ == "__main__":
         print('successful upload')
     except:
         print('error: failed upload')
-    sleep(120)
+    print('done')
 
