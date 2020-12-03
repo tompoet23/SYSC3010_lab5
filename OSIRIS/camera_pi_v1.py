@@ -66,11 +66,11 @@ def drive(drive):
 
 if __name__ == "__main__":
     _auth = auth()
-    while True:
-        try:
-            drive(_auth)
-            print('successful upload')
-        except:
-            print('error: failed upload')
-        sleep(120)
+    # while True:
+    try:
+        drive(_auth)
+        print('successful upload')
+    except:
+        print('error: failed upload')
+    sleep(120)
 
