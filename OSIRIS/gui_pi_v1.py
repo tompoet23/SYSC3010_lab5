@@ -1,3 +1,4 @@
+import csv
 import io
 import sqlite3
 from time import sleep
@@ -10,6 +11,13 @@ from googleapiclient.http import MediaIoBaseDownload
 from pydrive.auth import GoogleAuth
 from pydrive.drive import GoogleDrive
 
+from google_drive_downloader import GoogleDriveDownloader
+
+
+# ..\ORISIS\src\assets\pictures / t2.jpeg
+
+IMAGEPATH = r'OSIRIS/WebOSIRIS/src/assets/assets/pictures/osiris.jpg'
+CSVPATH = 'WebOSIRIS/src/assets/assets/output.csv'
 
 def getPicture(id):
     # print(id)
@@ -19,6 +27,7 @@ def getPicture(id):
     im = Image.open(r'_pic.png')
     im.show()
 
+
 def getPicture2(id):
     fh = io.BytesIO()
     downloader = MediaIoBaseDownload(fh, request)
@@ -27,6 +36,7 @@ def getPicture2(id):
         status, done = downloader.next_chunk()
         print
         "Download %d%%." % int(status.progress() * 100)
+
 
 def read():
     URL = 'https://api.thingspeak.com/channels/1161282/feeds.json?api_key='
@@ -43,70 +53,113 @@ def read():
         if 'null' not in field[0]["field1"]:
             print('dataEntry')
             toDatabase(field[0])
-        if 'null' not in field[0]["field2"]:
+        elif 'null' not in field[0]["field2"]:
             print('pic')
-            download_file_from_google_drive(field[0]["field2"])
+            print(field[0]["field2"])
+            try:
+                # download_file_from_google_drive(field[0]["field2"])
+                GoogleDriveDownloader.download_file_from_google_drive(file_id=field[0]["field2"], dest_path=IMAGEPATH)
+            except SyntaxError:
+                print('error: failed to download')
+                print(SyntaxError)
+            try:
+                im = Image.open(IMAGEPATH)
+                print(im.format)
+                if im.format is 'JPG':
+                    im.close()
+                    raise
+                im.close()
+                print('successful image download')
+            except:
+                print('error: not an image')
             # getPicture(field[0]["field2"])
-        print('success')
-    except:
+    except SyntaxError:
         print("connection failed")
+        print(SyntaxError)
+
 
 def toDatabase(entry):
     dbconnect = sqlite3.connect("database")
     dbconnect.row_factory = sqlite3.Row
     cursor = dbconnect.cursor()
     data = json.loads(entry["field1"])
-
-    cursor.execute("INSERT INTO sensorTable values(?, ?, ?, ?, ?, ?, ?)",
+    print(entry)
+    print(data)
+    cursor.execute("INSERT OR IGNORE INTO sensorTable values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
                    (entry['created_at'],
                     'null',
                     'null',
                     data['humid'],
                     data['press'],
                     data['temp'],
-                    'null'))
+                    'null',
+                    data['pitch'],
+                    data['yaw'],
+                    data['roll']))
 
-    cursor.execute("SELECT * FROM sensorTable")
+    # cursor.execute("SELECT * FROM sensorTable")
     # for row in cursor:
     #     print(row['date'], row['alertedSensor'], row['sound'], row['humidity'], row['pressure'], row['temperature'], row['picture'])
     dbconnect.commit()
+    query = "SELECT * FROM sensorTable"
+    cursor.execute(query)
+    with open(CSVPATH, "w") as outfile:
+        writer = csv.writer(outfile, quoting=csv.QUOTE_NONNUMERIC)
+        writer.writerow(col[0] for col in cursor.description)
+        for row in cursor:
+            writer.writerow(row)
+
     dbconnect.close()
+
 
 def auth():
     gauth = GoogleAuth()
     gauth.LocalWebserverAuth()
     return GoogleDrive(gauth)
 
+
 import requests
+
 
 def download_file_from_google_drive(id):
     URL = "https://docs.google.com/uc?export=download"
 
     session = requests.Session()
 
-    response = session.get(URL, params = { 'id' : id }, stream = True)
+    response = session.get(URL, params={'id': id}, stream=True)
     token = get_confirm_token(response)
 
     if token:
-        params = { 'id' : id, 'confirm' : token }
-        response = session.get(URL, params = params, stream = True)
-
+        params = {'id': id, 'confirm': token}
+        response = session.get(URL, params=params, stream=True)
+    if "<html>" in response:
+        print('google blocked this request, oops')
+        raise
     save_response_content(response)
+
 
 def get_confirm_token(response):
     for key, value in response.cookies.items():
-        if key.startswith('download_warning'):
+        if key.startswith(' download_warning'):
             return value
 
     return None
 
-def save_response_content(response):
-    CHUNK_SIZE = 32768
 
-    with open('t2.jpeg', "wb") as f:
-        for chunk in response.iter_content(CHUNK_SIZE):
-            if chunk: # filter out keep-alive new chunks
+def save_response_content(response):
+    # CHUNK_SIZE = 32768
+    # with open(IMAGEPATH, "wb") as f:
+    # response.read
+    print(response.status_code)
+    if response.status_code == 200:
+        with open(IMAGEPATH, 'wb') as f:
+            for chunk in response.iter_content(1024):
                 f.write(chunk)
+    # with open(IMAGEPATH, "wb") as f:
+    #     for chunk in response.iter_content(CHUNK_SIZE):
+    #         if chunk:  # filter out keep-alive new chunks
+    #             f.write(chunk)
+
 
 if __name__ == "__main__":
     # _auth = auth()
