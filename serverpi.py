@@ -1,9 +1,10 @@
 import requests
 import json
-import unittest
+import unittest 
 
 class read(unittest.TestCase):
-    def read_data_thingspeak():
+
+    def test_multipleasserts(self):
         URL = 'https://api.thingspeak.com/channels/1161282/fields/1.json?api_key='
         KEY = 'F2Q2UUQ0HDTLMK25'
         HEADER = '&results=1'
@@ -12,16 +13,22 @@ class read(unittest.TestCase):
     
         get_data= requests.get(NEW_URL).json()
         channel_id = get_data['channel']['id']
-    
-        temperature = get_data['feeds']['temperature']
-        humidity = get_data['feeds']['humidty']
-        pressure = get_data['feeds']['pressure']
+     
+        field_1 = get_data['feeds']   
+        print(field_1[0])
         
-        self.assertTrue(temperature < 50, msg="There is a possibility of a fire")
-        self.assertTrue(humidity < 5, msg="The air is dry, with a possibility of a fire")
-        self.assertTrue(pressure < 10, msg="The pressure is high")
+        data = json.loads(field_1[0]["field1"])
+        humidity = data['humid']
+        pressure = data['press']
+        temp = data['temp']
+
+        #self.assertTrue(temp < 50, msg="There is a possibility of a fire")
+
+        self.assertTrue(humidity > 35, msg="The air is dry, with a possibility of a fire")
+
+        #self.assertTrue(pressure < 950 | pressure > 1100, msg="The pressure is not normal, there could be  leaky roof or open door")
     
         
         
 if __name__ == '__main__':
-    read_data_thingspeak()
+    unittest.main()
