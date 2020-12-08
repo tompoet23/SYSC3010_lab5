@@ -2,11 +2,16 @@
 #
 # AUTHOR: Timothy Knowles
 #
-# VERSION: November 24th, 2020
+# VERSION: December 3rd, 2020
 # 
 # central configuration file for Thingspeak, Sql database, and google drivE
 #
-# CONFIG VALUES FOR: ("sensor_pi_v4.py")
+# CONFIG VALUES FOR: - ("sensor_pi_v4.py")
+#                    - ("serverpi_humidity.py")
+#                    - ("serverpi_pressure.py") 
+#                    - ("serverpi_temperature.py") 
+#                    - ("serverpi3.py") 
+#                    - ("readDataFunction.py)                  
 
 
 
@@ -19,7 +24,7 @@ class ThingSpeakCfg:
     write_url = 'https://api.thingspeak.com/update?api_key='
     
     #thingspeak read url
-    read_url = 'https://api.thingspeak.com/channels/1161282/feeds.json?api_key='
+    read_url = 'https://api.thingspeak.com/channels/1161282/fields/1.json?api_key='
 
     #thingspeak read key
     read_key = 'F2Q2UUQ0HDTLMK25'
